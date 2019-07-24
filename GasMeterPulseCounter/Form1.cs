@@ -28,10 +28,11 @@ namespace GasMeterPulseCounter
             label1.Text = "0";
             label2.Text = "0";
             PulseCountClass pulse = new PulseCountClass("COM4");
+            pulse.TimeLimitIPMeasure = 10;
             //pulse.GasMeterPortname = "COM4";
             pulse.PulseCount();
             label1.Text = pulse.TimeIPMeasure.ToString();
-            label2.Text = pulse.GasMeterFlow.ToString();
+            label2.Text = pulse.GasMeterCnt.ToString();
         }
         #region　廃止
 
@@ -102,45 +103,60 @@ namespace GasMeterPulseCounter
     /// </summary>
     public class PulseCountClass
     {
-        public PulseCountClass(string portname)
+        public PulseCountClass(string portname )
         {
             spGasMeter.PortName = portname;
-            
+           
         }
-
+     
         System.IO.Ports.SerialPort spGasMeter = new System.IO.Ports.SerialPort();
         Stopwatch STWIP = new Stopwatch();
         Stopwatch STWCnt = new Stopwatch();
         //public string GasMeterPortname;
 
+
+        private double _TimeIPMeasure;
         /// <summary>
         /// 実測定時間[s]
         /// </summary>
-        public double TimeIPMeasure;
+        public double TimeIPMeasure
+        {
+            get { return _TimeIPMeasure; }
+        }
 
         /// <summary>
-        /// 測定ガス流量[L]
+        /// 測定ガス流量パルス数(0.01pulse/L)
         /// </summary>
-        public double GasMeterFlow;
+        public long GasMeterCnt;
+
+      
+        //public long TimeLimitIPMeasure ;
 
 
-        private long GasMeterCnt;
-
+        private double _TimeLimitIPMeasure;
         /// <summary>
         /// 目標測定時間[s]
         /// </summary>
-        public long TimeLimitIPMeasure;
+        public double TimeLimitIPMeasure
+        {
+            //get { return _TimeLimitIPMeasure; }
+            set { _TimeLimitIPMeasure = value; }
+        }
+
         public void PulseCount()
         {
+            STWCnt.Reset();
+            STWIP.Reset();
+            //System.Threading.Thread.Sleep(500);
             //spGasMeter.PortName = GasMeterPortname;
             spGasMeter.BaudRate = 115200;
 
             spGasMeter.Open();
             bool flg=true;
-            spGasMeter.Write("b");
+            
             STWCnt.Restart();
             STWIP.Restart();
-
+            spGasMeter.Write("b");
             while (flg)
             {
                 try
@@ -154,19 +170,17 @@ namespace GasMeterPulseCounter
                 {
                 }
 
-                if (STWCnt.ElapsedMilliseconds > TimeLimitIPMeasure*1000)
+                if (STWCnt.ElapsedMilliseconds > _TimeLimitIPMeasure*1000)
                 {
-                    TimeIPMeasure = (double)STWIP.ElapsedMilliseconds;
+                    _TimeIPMeasure = (double)STWIP.ElapsedMilliseconds;
                     STWIP.Reset();
                     STWCnt.Reset();
-                    TimeIPMeasure = TimeIPMeasure / 1000;
+                    _TimeIPMeasure = _TimeIPMeasure / 1000;
                     flg = false;
                 }
             }
 
             spGasMeter.Close();
-            GasMeterFlow = (double)GasMeterCnt / 100;//ガス流量単位を[L]に変更
-            
         }
 
     }

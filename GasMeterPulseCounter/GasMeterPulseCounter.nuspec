@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>GasMeterPulseCounter</id>
-    <version>1.0.2</version>
+    <version>1.0.4</version>
     <authors>Kazutaka Hotta</authors>
     <owners>Paloma</owners>
     <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
