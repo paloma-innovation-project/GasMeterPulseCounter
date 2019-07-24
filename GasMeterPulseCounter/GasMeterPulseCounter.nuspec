@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>GasMeterPulseCounter</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>Kazutaka Hotta</authors>
     <owners>Paloma</owners>
     <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
@@ -10,9 +10,9 @@
     <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ガスメーターパルスカウント</description>
-    <releaseNotes>新規追加</releaseNotes>
+    <releaseNotes>改修</releaseNotes>
     <copyright>Paloma 2019</copyright>
-    <tags>給湯器 通信</tags>
+    <tags>ガスメーターパルス取得</tags>
     <dependencies>
       
     </dependencies>

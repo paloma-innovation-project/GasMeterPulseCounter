@@ -27,8 +27,8 @@ namespace GasMeterPulseCounter
         {
             label1.Text = "0";
             label2.Text = "0";
-            PulseCountClass pulse = new PulseCountClass();
-            pulse.GasMeterPortname = "COM4";
+            PulseCountClass pulse = new PulseCountClass("COM4");
+            //pulse.GasMeterPortname = "COM4";
             pulse.PulseCount();
             label1.Text = pulse.TimeIPMeasure.ToString();
             label2.Text = pulse.GasMeterCnt.ToString();
@@ -99,6 +99,12 @@ namespace GasMeterPulseCounter
 
     public class PulseCountClass
     {
+        public PulseCountClass(string portname)
+        {
+            spGasMeter.PortName = portname;
+            
+        }
+
         System.IO.Ports.SerialPort spGasMeter = new System.IO.Ports.SerialPort();
         Stopwatch STWIP = new Stopwatch();
         Stopwatch STWCnt = new Stopwatch();
@@ -109,7 +115,7 @@ namespace GasMeterPulseCounter
         public long TimeLimitIPMeasure = 10000;
         public void PulseCount()
         {
-            spGasMeter.PortName = GasMeterPortname;
+            //spGasMeter.PortName = GasMeterPortname;
             spGasMeter.BaudRate = 115200;
 
             spGasMeter.Open();
