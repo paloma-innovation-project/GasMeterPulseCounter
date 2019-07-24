@@ -31,7 +31,7 @@ namespace GasMeterPulseCounter
             //pulse.GasMeterPortname = "COM4";
             pulse.PulseCount();
             label1.Text = pulse.TimeIPMeasure.ToString();
-            label2.Text = pulse.GasMeterCnt.ToString();
+            label2.Text = pulse.GasMeterFlow.ToString();
         }
         #region　廃止
 
@@ -97,6 +97,9 @@ namespace GasMeterPulseCounter
         #endregion
     }
 
+    /// <summary>
+    /// COMNoを渡す。TimeIPMeasureとGasMeterCnt
+    /// </summary>
     public class PulseCountClass
     {
         public PulseCountClass(string portname)
@@ -108,11 +111,25 @@ namespace GasMeterPulseCounter
         System.IO.Ports.SerialPort spGasMeter = new System.IO.Ports.SerialPort();
         Stopwatch STWIP = new Stopwatch();
         Stopwatch STWCnt = new Stopwatch();
-        public string GasMeterPortname;
+        //public string GasMeterPortname;
 
+        /// <summary>
+        /// 実測定時間[s]
+        /// </summary>
         public double TimeIPMeasure;
-        public ulong GasMeterCnt;
-        public long TimeLimitIPMeasure = 10000;
+
+        /// <summary>
+        /// 測定ガス流量[L]
+        /// </summary>
+        public double GasMeterFlow;
+
+
+        private long GasMeterCnt;
+
+        /// <summary>
+        /// 目標測定時間[s]
+        /// </summary>
+        public long TimeLimitIPMeasure;
         public void PulseCount()
         {
             //spGasMeter.PortName = GasMeterPortname;
@@ -131,14 +148,13 @@ namespace GasMeterPulseCounter
                     spGasMeter.DiscardInBuffer();
                     spGasMeter.ReadTimeout = 100;
                     spGasMeter.Write("a");
-                    GasMeterCnt = ulong.Parse(spGasMeter.ReadLine());
-                    //Console.WriteLine("時間：{0}秒  パルス：{1}", STWCnt.Elapsed.TotalSeconds.ToString(), GasMeterStr);
+                    GasMeterCnt = long.Parse(spGasMeter.ReadLine());
                 }
                 catch (Exception)
                 {
                 }
 
-                if (STWCnt.ElapsedMilliseconds > TimeLimitIPMeasure)
+                if (STWCnt.ElapsedMilliseconds > TimeLimitIPMeasure*1000)
                 {
                     TimeIPMeasure = (double)STWIP.ElapsedMilliseconds;
                     STWIP.Reset();
@@ -149,6 +165,7 @@ namespace GasMeterPulseCounter
             }
 
             spGasMeter.Close();
+            GasMeterFlow = (double)GasMeterCnt / 100;//ガス流量単位を[L]に変更
             
         }
 
